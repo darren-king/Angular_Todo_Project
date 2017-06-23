@@ -1,4 +1,4 @@
-var toDoApp = angular.module('toDoApp', ['ngRoute'/*, 'RouteControllers'*/]);
+var toDoApp = angular.module('toDoApp', ['ngRoute', 'angular-storage']); /*, 'RouteControllers'*/
 // above we have declared the app and injected the ngRoute dependency written within an array - the RouteControllers
 // dependency is just added below as a controller rather than as a seperate controller module. 
 
@@ -33,10 +33,24 @@ toDoApp.controller("HomeController", ["$scope", function($scope){
 
 }]); 
 
-toDoApp.controller("RegisterController", ["$scope", "UserAPIService", function($scope, UserAPIService){
+toDoApp.controller("RegisterController", ["$scope", "UserAPIService", 'store', function($scope, UserAPIService, store){
 
 	$scope.registrationUser = {};
 	var URL = "https://morning-castle-91468.herokuapp.com/";
+
+
+	$scope.login = function(){
+
+		UserAPIService.callAPI(URL + "accounts/api-token-auth/", $scope.data).then(function(results){
+			$scope.token = results.data.token;
+			store.set("username", $scope.registrationUser.username);
+			store.set("authToken",$scope.token);
+			console.log($scope.token);
+		}).catch(function(err){
+			console.log(err.data);
+		});
+
+	}
 
 	$scope.submitForm = function(){										//make sure you put $scope before the function as seen here. 
 		
@@ -49,9 +63,10 @@ toDoApp.controller("RegisterController", ["$scope", "UserAPIService", function($
 		console.log("Username: " + $scope.registrationUser.username);
 		console.log("Password: " + $scope.registrationUser.password);
 
-		UserAPIService.registerUser(URL + "accounts/register/", $scope.registrationUser).then(function(results){
+		UserAPIService.callAPI(URL + "accounts/register/", $scope.registrationUser).then(function(results){
 			$scope.data = results.data;
 			alert("You have successfully registered to Angular ToDo");
+			$scope.login();
 		}).catch(function(err){
 			alert("Oops...something went wrong!");
 			console.log(err);
@@ -68,7 +83,7 @@ toDoApp.controller("RegisterController", ["$scope", "UserAPIService", function($
 toDoApp.factory("UserAPIService", ["$http", function($http){
 
 	UserAPIService = {
-		registerUser: function(url,data){
+		callAPI: function(url,data){
 			return $http.post(url,data);
 		}
 	};
