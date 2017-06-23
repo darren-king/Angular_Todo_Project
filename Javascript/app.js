@@ -32,3 +32,50 @@ toDoApp.controller("HomeController", ["$scope", function($scope){
 	$scope.title = "Welcome To my Angular ToDo App";
 
 }]); 
+
+toDoApp.controller("RegisterController", ["$scope", "UserAPIService", function($scope, UserAPIService){
+
+	$scope.registrationUser = {};
+	var URL = "https://morning-castle-91468.herokuapp.com/";
+
+	$scope.submitForm = function(){										//make sure you put $scope before the function as seen here. 
+		
+		if ($scope.registrationForm.$valid){
+			$scope.registrationUser.username = $scope.user.username;
+			$scope.registrationUser.password = $scope.user.password;
+		}
+
+		console.log("Username and Password entered!");
+		console.log("Username: " + $scope.registrationUser.username);
+		console.log("Password: " + $scope.registrationUser.password);
+
+		UserAPIService.registerUser(URL + "accounts/register/", $scope.registrationUser).then(function(results){
+			$scope.data = results.data;
+			alert("You have successfully registered to Angular ToDo");
+		}).catch(function(err){
+			alert("Oops...something went wrong!");
+			console.log(err);
+		});
+
+	}
+
+}]);
+
+
+//this section pertains to the addition of a User API service. 
+//Services in Angular are generally used to make calls to APIs.
+
+toDoApp.factory("UserAPIService", ["$http", function($http){
+
+	UserAPIService = {
+		registerUser: function(url,data){
+			return $http.post(url,data);
+		}
+	};
+
+	return UserAPIService;
+
+}]);
+
+
+
