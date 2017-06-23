@@ -17,12 +17,12 @@ This app uses JSON Web Tokens to authenticate users and keep them logged in. All
 ## Features
 
 ### Existing Features
-- Absolutely nothing as of yet!
-
-### Features Left to Implement
 - User Based Features
 	- Registration
 	- Login
+
+### Features Left to Implement
+- User Based Features
 	- Logout
 
 - Todo Based Features
