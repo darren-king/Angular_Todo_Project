@@ -22,6 +22,10 @@ toDoApp.config(['$routeProvider', '$locationProvider', function($routeProvider, 
 			templateUrl: 'views/todo.html',
 			controller: 'TodoController'
 		})
+		.when('/todo/edit/:id',{
+			templateUrl:'views/edit-todo.html',
+			controller: 'EditTodoController'
+		})
 		.otherwise({
 			redirectTo: '/'
 		});
@@ -36,6 +40,8 @@ toDoApp.controller("HomeController", ["$scope", function($scope){
 	$scope.title = "Welcome To my Angular ToDo App";
 
 }]); 
+
+// This is our Registration Controller
 
 toDoApp.controller("RegisterController", ["$scope", "UserAPIService", 'store', function($scope, UserAPIService, store){
 
@@ -80,6 +86,7 @@ toDoApp.controller("RegisterController", ["$scope", "UserAPIService", 'store', f
 
 }]);
 
+// This is our ToDo Controller 
 
 toDoApp.controller("TodoController", ["$scope", "$location", "TodoAPIService", "store", function($scope, $location, TodoAPIService, store){
 
@@ -113,7 +120,50 @@ toDoApp.controller("TodoController", ["$scope", "$location", "TodoAPIService", "
 		}
 	}
 
+
+	$scope.editTodo = function(id){
+		$location.path("/todo/edit/" + id);
+	};
+
+	$scope.deleteTodo = function(){
+		TodoAPIService.deleteTodo(URL + "todo/" + id, $scope.username, $scope.authToken).then(function(results){
+			console.log(results);
+		}).catch(function(err){
+			console.log(err);
+		});
+	};
+
 }]);
+
+
+// This is our Edit ToDo Controller
+
+toDoApp.controller("EditToDoController", ["$scope", "$location", "$routeParams", "TodoAPIService", "store", function($scope, $location, $routeParams, TodoAPIService, store){
+
+	var id = $routeParams.id;
+	var URL = "https://morning-castle-91468.herokuapp.com/";
+
+
+	TodoAPIService.getTodos(URL + "todo/" + id, $scope.username, store.get("authToken")).then(function(results){
+		$scope.todo = results.data;
+	}).catch(function(err){
+		console.log(err);
+	})
+
+
+	$scope.submitForm = function(){
+		if ($scope.todoForm.$valid){
+			$scope.todo.username = $scope.username;
+
+			TodoAPIService.editTodo(URL + "todo/" + id, $scope.todo, store.get("authToken")).then(function(results){
+				$location.path("/todo");
+			}).catch(function(err){
+				console.log(err);
+			})
+		}
+	}
+
+}])
 
 
 //this section pertains to the addition of a User API service. 
@@ -135,12 +185,20 @@ toDoApp.factory("TodoAPIService", ["$http", function($http){
 
 	TodoAPIService = {
 		getTodos: function(url, data, token){
-			var header = "Authorisation: JWT " + token;
+			var header = "Authorization: JWT " + token;
 			return $http.get(url, {params:{"username":data}}, header);
 		},
 		createTodo: function(url, data, token){
-			header = "Authorisation: JWT " + token;
-			return $http.post(url,data,header);
+			header = "Authorization: JWT " + token;
+			return $http.post(url, data, header);
+		},
+		editTodo: function(url, data, token){
+			header = "Authorization: JWT " + token;
+			return $http.put(url, data, header);
+		},
+		deleteTodo: function(url, token){
+			header = "Authorization: JWT " + token;
+			return $http.delete(url, token);
 		}
 	};
 
