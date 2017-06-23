@@ -1,0 +1,30 @@
+{
+  "name": "Angular_Todo_Project",
+  "description": "## Overview",
+  "main": "",
+  "authors": [
+    "Darren King <darrenking@rcsi.ie>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "HTML5",
+    "CSS",
+    "Bootstrap",
+    "JS",
+    "Angular",
+    "JQuery"
+  ],
+  "homepage": "https://github.com/darren-king/Angular_Todo_Project",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "angular": "^1.6.4",
+    "angular-route": "^1.6.4"
+  }
+}

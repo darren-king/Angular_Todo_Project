@@ -1,5 +1,8 @@
 {
   "name": "",
-  "version": "",
-  "description": "## Overview"
+  "description": "## Overview",
+  "dependencies": {
+    "bower": "^1.8.0"
+  },
+  "version": ""
 }
